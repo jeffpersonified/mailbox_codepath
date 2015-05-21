@@ -33,6 +33,7 @@ class MailboxViewController: UIViewController {
     var deletePoint: CGFloat = 260
     var deferPoint: CGFloat = -60
     var categorizePoint: CGFloat = -260
+    var iconFollowPoint: CGFloat = 100
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,13 +46,12 @@ class MailboxViewController: UIViewController {
     }
     
     @IBAction func didPan(sender: UIPanGestureRecognizer) {
-
         var panTranslation = sender.translationInView(view)
-        
         if sender.state == UIGestureRecognizerState.Began {
         } else if sender.state == UIGestureRecognizerState.Changed {
             moveMessageWithPan(panTranslation)
             changePosition(panTranslation)
+            setIconImage(panTranslation)
         } else if sender.state == UIGestureRecognizerState.Ended {
             setEndPosition(panTranslation)
         }
@@ -71,10 +71,10 @@ class MailboxViewController: UIViewController {
         messageImageView.center = CGPoint(x: translation.x + originalMessageLocationX, y: originalMessageLocationY)
     }
 
-    
     func changePosition(translation: CGPoint) {
         setColor(translation)
-        setIcons(translation)
+        setIconAlpha(translation)
+        setIconLocation(translation)
     }
     
     func setEndPosition(translation: CGPoint) {
@@ -105,7 +105,7 @@ class MailboxViewController: UIViewController {
         }
     }
     
-    func setIcons(translation: CGPoint) {
+    func setIconAlpha(translation: CGPoint) {
         if translation.x > archivePoint {
             leftIconImageView.alpha = 1
             rightIconImageView.alpha = 0
@@ -115,6 +115,24 @@ class MailboxViewController: UIViewController {
         } else {
             leftIconImageView.alpha = 0.5
             rightIconImageView.alpha = 0.5
+        }
+    }
+    
+    func setIconImage(translation: CGPoint) {
+        if translation.x > deletePoint {
+            leftIconImageView.image = UIImage( named: "delete_icon")
+        } else if translation.x < categorizePoint {
+            rightIconImageView.image = UIImage( named: "list_icon")
+        } else {
+            leftIconImageView.image = UIImage( named: "archive_icon")
+            rightIconImageView.image = UIImage( named: "later_icon")
+        }
+    }
+    
+    func setIconLocation(translation: CGPoint) {
+//        println(translation.x)
+        if translation.x > iconFollowPoint {
+//            leftIconImageView.center.x += translation.x
         }
     }
 }
