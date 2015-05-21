@@ -15,6 +15,8 @@ class MailboxViewController: UIViewController {
     @IBOutlet weak var helpLabelImageView: UIImageView!
     @IBOutlet weak var messageImageView: UIImageView!
     @IBOutlet weak var messageFeedImageView: UIImageView!
+    @IBOutlet weak var rightIconImageView: UIImageView!
+    @IBOutlet weak var leftIconImageView: UIImageView!
     
     let blueColor = UIColor(red: 68/255, green: 170/255, blue: 210/255, alpha: 1)
     let yellowColor = UIColor(red: 254/255, green: 202/255, blue: 22/255, alpha: 1)
@@ -29,6 +31,7 @@ class MailboxViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setIcons()
         setScrollViewHeight()
         defineMessageView()
     }
@@ -59,5 +62,10 @@ class MailboxViewController: UIViewController {
     func defineMessageView() {
         originalMessageLocationX = messageImageView.center.x
         originalMessageLocationY = messageImageView.center.y
+    }
+    
+    func setIcons() {
+        leftIconImageView.alpha = 0.5
+        rightIconImageView.alpha = 0.5
     }
 }

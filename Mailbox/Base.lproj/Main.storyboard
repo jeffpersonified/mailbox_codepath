@@ -71,9 +71,11 @@
                     <navigationItem key="navigationItem" id="WW3-Xr-OXz"/>
                     <connections>
                         <outlet property="helpLabelImageView" destination="2Oe-kQ-yUu" id="2db-o2-hVp"/>
+                        <outlet property="leftIconImageView" destination="Mix-yx-c5c" id="kUi-di-GpU"/>
                         <outlet property="messageFeedImageView" destination="e1d-B0-xzB" id="etc-kj-03Q"/>
                         <outlet property="messageImageView" destination="Fa4-JY-g0b" id="pT3-Q5-xwk"/>
                         <outlet property="messagesScrollView" destination="CD2-vF-tDn" id="d3o-Ks-l9o"/>
+                        <outlet property="rightIconImageView" destination="fmC-Jg-4oL" id="p3h-BP-4I4"/>
                         <outlet property="searchImageView" destination="oca-ZV-iQb" id="TnT-rl-Nbu"/>
                     </connections>
                 </viewController>
