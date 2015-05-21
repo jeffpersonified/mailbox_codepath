@@ -72,6 +72,7 @@
                     <connections>
                         <outlet property="helpLabelImageView" destination="2Oe-kQ-yUu" id="2db-o2-hVp"/>
                         <outlet property="leftIconImageView" destination="Mix-yx-c5c" id="kUi-di-GpU"/>
+                        <outlet property="messageContainerView" destination="W3P-AP-UGD" id="6r3-UR-GDV"/>
                         <outlet property="messageFeedImageView" destination="e1d-B0-xzB" id="etc-kj-03Q"/>
                         <outlet property="messageImageView" destination="Fa4-JY-g0b" id="pT3-Q5-xwk"/>
                         <outlet property="messagesScrollView" destination="CD2-vF-tDn" id="d3o-Ks-l9o"/>

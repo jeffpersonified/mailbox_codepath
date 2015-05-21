@@ -13,6 +13,7 @@ class MailboxViewController: UIViewController {
     @IBOutlet weak var messagesScrollView: UIScrollView!
     @IBOutlet weak var searchImageView: UIImageView!
     @IBOutlet weak var helpLabelImageView: UIImageView!
+    @IBOutlet weak var messageContainerView: UIView!
     @IBOutlet weak var messageImageView: UIImageView!
     @IBOutlet weak var messageFeedImageView: UIImageView!
     @IBOutlet weak var rightIconImageView: UIImageView!
@@ -28,10 +29,13 @@ class MailboxViewController: UIViewController {
     var messageScrollViewHeight: CGFloat = 0.0
     var originalMessageLocationX: CGFloat = 0.0
     var originalMessageLocationY: CGFloat = 0.0
+    var archivePoint: CGFloat = 60
+    var deletePoint: CGFloat = 260
+    var deferPoint: CGFloat = -60
+    var categorizePoint: CGFloat = -260
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setIcons()
         setScrollViewHeight()
         defineMessageView()
     }
@@ -46,11 +50,10 @@ class MailboxViewController: UIViewController {
         
         if sender.state == UIGestureRecognizerState.Began {
         } else if sender.state == UIGestureRecognizerState.Changed {
-            
-            messageImageView.center = CGPoint(x: panTranslation.x + originalMessageLocationX, y: originalMessageLocationY)
-            println(panTranslation.x)
-            
+            moveMessageWithPan(panTranslation)
+            changePosition(panTranslation)
         } else if sender.state == UIGestureRecognizerState.Ended {
+            setEndPosition(panTranslation)
         }
     }
     
@@ -64,8 +67,54 @@ class MailboxViewController: UIViewController {
         originalMessageLocationY = messageImageView.center.y
     }
     
-    func setIcons() {
-        leftIconImageView.alpha = 0.5
-        rightIconImageView.alpha = 0.5
+    func moveMessageWithPan(translation: CGPoint) {
+        messageImageView.center = CGPoint(x: translation.x + originalMessageLocationX, y: originalMessageLocationY)
+    }
+
+    
+    func changePosition(translation: CGPoint) {
+        setColor(translation)
+        setIcons(translation)
+    }
+    
+    func setEndPosition(translation: CGPoint) {
+        if translation.x > archivePoint {
+            messageImageView.center = CGPoint(x: 320 + originalMessageLocationX, y: originalMessageLocationY)
+        } else if translation.x > deletePoint {
+            messageImageView.center = CGPoint(x: 320 + originalMessageLocationX, y: originalMessageLocationY)
+        } else if translation.x < deferPoint {
+            messageImageView.center = CGPoint(x: -320 + originalMessageLocationX, y: originalMessageLocationY)
+        } else if translation.x < categorizePoint {
+            messageImageView.center = CGPoint(x: -320 + originalMessageLocationX, y: originalMessageLocationY)
+        } else {
+            messageImageView.center = CGPoint(x: originalMessageLocationX, y: originalMessageLocationY)
+        }
+    }
+    
+    func setColor(translation: CGPoint) {
+        if translation.x < deletePoint && translation.x > 0 {
+            messageContainerView.backgroundColor = greenColor
+        } else if translation.x > deletePoint {
+            messageContainerView.backgroundColor = redColor
+        } else if translation.x < 0 && translation.x > categorizePoint {
+            messageContainerView.backgroundColor = yellowColor
+        } else if translation.x < categorizePoint {
+            messageContainerView.backgroundColor = brownColor
+        } else {
+            messageContainerView.backgroundColor = grayColor
+        }
+    }
+    
+    func setIcons(translation: CGPoint) {
+        if translation.x > archivePoint {
+            leftIconImageView.alpha = 1
+            rightIconImageView.alpha = 0
+        } else if translation.x < deferPoint {
+            rightIconImageView.alpha = 1
+            leftIconImageView.alpha = 0
+        } else {
+            leftIconImageView.alpha = 0.5
+            rightIconImageView.alpha = 0.5
+        }
     }
 }
