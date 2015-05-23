@@ -33,12 +33,14 @@ class MailboxViewController: UIViewController {
     var deletePoint: CGFloat = 260
     var deferPoint: CGFloat = -60
     var categorizePoint: CGFloat = -260
-    var iconFollowPoint: CGFloat = 100
+    var iconFollowPoint: CGFloat = 60
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setScrollViewHeight()
         defineMessageView()
+        leftIconImageView.center.x = iconFollowPoint / 2
+        rightIconImageView.center.x = 320 - (iconFollowPoint / 2)
     }
 
     override func didReceiveMemoryWarning() {
@@ -130,9 +132,13 @@ class MailboxViewController: UIViewController {
     }
     
     func setIconLocation(translation: CGPoint) {
-//        println(translation.x)
         if translation.x > iconFollowPoint {
-//            leftIconImageView.center.x += translation.x
+            var newLeftIconLocation = translation.x - (iconFollowPoint / 2)
+            leftIconImageView.center.x = newLeftIconLocation
+        } else if translation.x < -1 * iconFollowPoint {
+            var newRightIconLocation = 320 + (translation.x + (iconFollowPoint / 2))
+            rightIconImageView.center.x = newRightIconLocation
+            println(newRightIconLocation)
         }
     }
 }
