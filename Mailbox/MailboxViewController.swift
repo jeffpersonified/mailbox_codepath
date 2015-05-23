@@ -34,6 +34,8 @@ class MailboxViewController: UIViewController {
     var deferPoint: CGFloat = -60
     var categorizePoint: CGFloat = -260
     var iconFollowPoint: CGFloat = 60
+    var messageSpringDamping: CGFloat = 0.8
+    var messageVelocity: CGFloat = 0.9
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,15 +83,15 @@ class MailboxViewController: UIViewController {
     
     func setEndPosition(translation: CGPoint) {
         if translation.x > archivePoint {
-            messageImageView.center = CGPoint(x: 320 + originalMessageLocationX, y: originalMessageLocationY)
+            sendMessageRightForArchive()
         } else if translation.x > deletePoint {
-            messageImageView.center = CGPoint(x: 320 + originalMessageLocationX, y: originalMessageLocationY)
+            sendMessageRightForDelete()
         } else if translation.x < deferPoint {
-            messageImageView.center = CGPoint(x: -320 + originalMessageLocationX, y: originalMessageLocationY)
+            sendMessageLeftForDefer()
         } else if translation.x < categorizePoint {
-            messageImageView.center = CGPoint(x: -320 + originalMessageLocationX, y: originalMessageLocationY)
+            sendMessageLeftForCategorize()
         } else {
-            messageImageView.center = CGPoint(x: originalMessageLocationX, y: originalMessageLocationY)
+            setMessageBackToCenter()
         }
     }
     
@@ -138,7 +140,40 @@ class MailboxViewController: UIViewController {
         } else if translation.x < -1 * iconFollowPoint {
             var newRightIconLocation = 320 + (translation.x + (iconFollowPoint / 2))
             rightIconImageView.center.x = newRightIconLocation
-            println(newRightIconLocation)
         }
+    }
+    
+    func sendMessageRightForArchive() {
+        UIView.animateWithDuration(0.1, animations: { () -> Void in
+            self.messageImageView.center = CGPoint(x: 320 + self.originalMessageLocationX, y: self.originalMessageLocationY)
+            self.leftIconImageView.center.x += 320
+        }, completion: nil)
+    }
+    
+    func sendMessageRightForDelete() {
+        UIView.animateWithDuration(0.1, animations: { () -> Void in
+            self.messageImageView.center = CGPoint(x: 320 + self.originalMessageLocationX, y: self.originalMessageLocationY)
+            self.leftIconImageView.center.x += 320
+            }, completion: nil)
+    }
+    
+    func sendMessageLeftForCategorize() {
+        UIView.animateWithDuration(0.1, animations: { () -> Void in
+            self.messageImageView.center = CGPoint(x: -320 + self.originalMessageLocationX, y: self.originalMessageLocationY)
+            self.rightIconImageView.center.x -= 320
+            }, completion: nil)
+    }
+
+    func sendMessageLeftForDefer() {
+        UIView.animateWithDuration(0.1, animations: { () -> Void in
+            self.messageImageView.center = CGPoint(x: -320 + self.originalMessageLocationX, y: self.originalMessageLocationY)
+            self.rightIconImageView.center.x -= 320
+            }, completion: nil)
+    }
+    
+    func setMessageBackToCenter() {
+        UIView.animateWithDuration(0.3, delay: 0, usingSpringWithDamping: messageSpringDamping, initialSpringVelocity: messageVelocity, options: nil, animations: { () -> Void in
+            self.messageImageView.center = CGPoint(x: self.originalMessageLocationX, y: self.originalMessageLocationY)
+            }, completion: nil)
     }
 }
