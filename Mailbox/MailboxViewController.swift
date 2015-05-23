@@ -140,6 +140,10 @@ class MailboxViewController: UIViewController {
         } else if translation.x < deferPoint {
             rightIconImageView.alpha = 1
             leftIconImageView.alpha = 0
+        } else if translation.x < archivePoint && translation.x > (archivePoint * 0.5) {
+            leftIconImageView.alpha = translation.x / archivePoint
+        } else if translation.x > deferPoint && translation.x < (deferPoint * 0.5) {
+            rightIconImageView.alpha = -1 * (translation.x / archivePoint)
         } else {
             leftIconImageView.alpha = 0.5
             rightIconImageView.alpha = 0.5
@@ -190,7 +194,6 @@ class MailboxViewController: UIViewController {
             self.messageImageView.center = CGPoint(x: -320 + self.originalMessageLocationX, y: self.originalMessageLocationY)
             self.rightIconImageView.center.x -= 320
         }) { (Bool) -> Void in
-            println("Yo")
             self.showlistImageView()
         }
     }
