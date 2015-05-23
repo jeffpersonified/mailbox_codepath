@@ -18,6 +18,8 @@ class MailboxViewController: UIViewController {
     @IBOutlet weak var messageFeedImageView: UIImageView!
     @IBOutlet weak var rightIconImageView: UIImageView!
     @IBOutlet weak var leftIconImageView: UIImageView!
+    @IBOutlet weak var rescheduleImageView: UIImageView!
+    @IBOutlet weak var listImageView: UIImageView!
     
     let blueColor = UIColor(red: 68/255, green: 170/255, blue: 210/255, alpha: 1)
     let yellowColor = UIColor(red: 254/255, green: 202/255, blue: 22/255, alpha: 1)
@@ -36,9 +38,13 @@ class MailboxViewController: UIViewController {
     var iconFollowPoint: CGFloat = 60
     var messageSpringDamping: CGFloat = 0.8
     var messageVelocity: CGFloat = 0.9
+    var messageViewContentSpaceY: CGFloat = 0.0
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        messageViewContentSpaceY = self.messageContainerView.frame.height
+        rescheduleImageView.hidden = true
+        listImageView.hidden = true
         setScrollViewHeight()
         defineMessageView()
         leftIconImageView.center.x = iconFollowPoint / 2
@@ -58,6 +64,24 @@ class MailboxViewController: UIViewController {
             setIconImage(panTranslation)
         } else if sender.state == UIGestureRecognizerState.Ended {
             setEndPosition(panTranslation)
+        }
+    }
+    
+    @IBAction func didTapReschedule(sender: UITapGestureRecognizer) {
+        UIView.animateWithDuration(0.2, animations: { () -> Void in
+            self.rescheduleImageView.alpha = 0
+            self.rescheduleImageView.hidden = true
+        }) { (Bool) -> Void in
+            self.minimizeMessageView()
+        }
+    }
+    
+    @IBAction func didTapList(sender: UITapGestureRecognizer) {
+        UIView.animateWithDuration(0.2, animations: { () -> Void in
+            self.listImageView.alpha = 0
+            self.listImageView.hidden = true
+            }) { (Bool) -> Void in
+                self.minimizeMessageView()
         }
     }
     
@@ -86,10 +110,10 @@ class MailboxViewController: UIViewController {
             sendMessageRightForArchive()
         } else if translation.x > deletePoint {
             sendMessageRightForDelete()
-        } else if translation.x < deferPoint {
-            sendMessageLeftForDefer()
         } else if translation.x < categorizePoint {
             sendMessageLeftForCategorize()
+        } else if translation.x < deferPoint {
+            sendMessageLeftForDefer()
         } else {
             setMessageBackToCenter()
         }
@@ -147,33 +171,83 @@ class MailboxViewController: UIViewController {
         UIView.animateWithDuration(0.1, animations: { () -> Void in
             self.messageImageView.center = CGPoint(x: 320 + self.originalMessageLocationX, y: self.originalMessageLocationY)
             self.leftIconImageView.center.x += 320
-        }, completion: nil)
+        }) { (Bool) -> Void in
+            self.minimizeMessageView()
+        }
     }
     
     func sendMessageRightForDelete() {
         UIView.animateWithDuration(0.1, animations: { () -> Void in
             self.messageImageView.center = CGPoint(x: 320 + self.originalMessageLocationX, y: self.originalMessageLocationY)
             self.leftIconImageView.center.x += 320
-            }, completion: nil)
+        }) { (Bool) -> Void in
+            self.minimizeMessageView()
+        }
     }
     
     func sendMessageLeftForCategorize() {
         UIView.animateWithDuration(0.1, animations: { () -> Void in
             self.messageImageView.center = CGPoint(x: -320 + self.originalMessageLocationX, y: self.originalMessageLocationY)
             self.rightIconImageView.center.x -= 320
-            }, completion: nil)
+        }) { (Bool) -> Void in
+            println("Yo")
+            self.showlistImageView()
+        }
     }
 
     func sendMessageLeftForDefer() {
         UIView.animateWithDuration(0.1, animations: { () -> Void in
             self.messageImageView.center = CGPoint(x: -320 + self.originalMessageLocationX, y: self.originalMessageLocationY)
             self.rightIconImageView.center.x -= 320
-            }, completion: nil)
+        }) { (Bool) -> Void in
+            self.showReschuduleImageView()
+        }
     }
     
     func setMessageBackToCenter() {
         UIView.animateWithDuration(0.3, delay: 0, usingSpringWithDamping: messageSpringDamping, initialSpringVelocity: messageVelocity, options: nil, animations: { () -> Void in
             self.messageImageView.center = CGPoint(x: self.originalMessageLocationX, y: self.originalMessageLocationY)
             }, completion: nil)
+    }
+    
+    func minimizeMessageView() {
+        UIView.animateWithDuration(0.3, animations: { () -> Void in
+            var messageViewContentSpaceY = self.messageContainerView.frame.height
+            self.messageFeedImageView.center.y -= messageViewContentSpaceY
+        }) { (Bool) -> Void in
+            self.bringBackDatMessage()
+        }
+    }
+    
+    func showReschuduleImageView() {
+        UIView.animateWithDuration(0.3, animations: { () -> Void in
+            self.rescheduleImageView.hidden = false
+            self.rescheduleImageView.alpha = 1
+        }, completion: nil)
+    }
+    
+    func showlistImageView() {
+        UIView.animateWithDuration(0.3, animations: { () -> Void in
+            self.listImageView.hidden = false
+            self.listImageView.alpha = 1
+        }, completion: nil)
+    }
+    
+    func bringBackDatMessage() {
+        self.messageImageView.center = CGPoint(x: self.originalMessageLocationX, y: self.originalMessageLocationY)
+        delay(1) {
+            UIView.animateWithDuration(0.4, animations: { () -> Void in
+                self.messageFeedImageView.center.y += self.messageViewContentSpaceY
+            }, completion: nil)
+        }
+    }
+    
+    func delay(delay:Double, closure:()->()) {
+        dispatch_after(
+            dispatch_time(
+                DISPATCH_TIME_NOW,
+                Int64(delay * Double(NSEC_PER_SEC))
+            ),
+            dispatch_get_main_queue(), closure)
     }
 }
